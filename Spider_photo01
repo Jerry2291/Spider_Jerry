@@ -1,0 +1,17 @@
+import re
+import requests
+
+response = requests.get('http://www.feipin668.com')       # 利用requests.get访问www.feipin668.com这一网站
+
+urls = re.findall(r'img src="(.*?)"',response.text,re.S)  # 利用re.findall正则匹配图片所在的位置
+
+    
+urls = 'http://www.feipin668.com' + urls[0]               # 补齐全部位置
+# urls = 'http://www.feipin668.com%s' %urls[0]            # 同上 方法不一样
+print(urls)
+
+photo = requests.get(urls)
+
+print(photo)
+with open('D:\\a','wb') as file:
+    file.write(photo.content)
