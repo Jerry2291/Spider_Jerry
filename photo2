@@ -1,0 +1,60 @@
+import re
+import requests
+import hashlib
+import time
+
+#response = requests.get('http://www.feipin668.com')
+
+#url_1 = re.findall(r'img src="(.*?)"',response.text,re.S)
+
+#url_2 = 'http://www.feipin668.com/%s'%url_1[0]
+
+#photo = requests.get(url_2)
+
+#print(photo)
+#with open('D:\\a','wb')as file:
+#    file.write(photo.content)
+
+def get_index(url):
+    repo1 = requests.get(url)
+    if repo1.status_code == 200:
+        #print(repo1.text)
+        return repo1.text
+
+    
+def parse_index(res):
+    #print(res)
+    urls1 = re.findall(r'img src="(.*?)"',res,re.S) 
+    print(urls1)
+    return urls1
+
+def get_detail(urls):
+    for url in urls:
+        if not url.startswith('/'):
+            url = '/%s'%url
+        if not url.startswith('http'):
+            url = 'http://www.feipin668.com%s'%url
+            print(url)
+        result = requests.get(url)
+        print('************')
+        #print(result.text)
+        save(result)
+        if result.status_code != 200:
+            break
+            
+        
+def save(result):
+    m = hashlib.md5()
+    m.update(str(time.time()).encode('utf-8'))
+    filename = r'%s.jpg'%m.hexdigest()
+    filepath = r'D:\\%s'%filename
+    with open(filepath,'wb')as file:
+        file.write(result.content)
+        
+def main():
+    response1 = get_index('http://www.feipin668.com')
+    response2 = parse_index(response1)
+    get_detail(response2)
+    
+if __name__ == '__main__':
+    main()
